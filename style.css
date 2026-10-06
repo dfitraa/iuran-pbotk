@@ -1,0 +1,18 @@
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    background-color: #f3f4f6; /* Abu-abu terang untuk luar layar di desktop */
+    color: #1f2937; 
+}
+
+/* Animasi Dropdown / Accordion */
+.accordion-content { 
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease; 
+    max-height: 0; 
+    opacity: 0; 
+    overflow: hidden; 
+}
+
+.accordion-content.open { 
+    max-height: 500px; 
+    opacity: 1; 
+}

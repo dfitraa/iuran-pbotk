@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keuangan Klub Badminton - PB OTK</title>
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Konfigurasi Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'soft-green': '#8fb996',
+                        'dark-neutral': '#2d3748',
+                        'cream': '#fdfbf7'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Plus Jakarta Sans Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Panggil file CSS terpisah -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="antialiased min-h-screen flex flex-col items-center sm:py-8">
+
+<div id="app-container" class="w-full max-w-lg bg-white sm:shadow-lg sm:rounded-2xl overflow-hidden min-h-screen sm:min-h-0">
+    
+    <!-- HEADER -->
+    <header class="bg-dark-neutral text-white p-5 flex justify-between items-center">
+        <h1 class="text-lg font-bold tracking-wide">UANG KAS PB.OTK</h1>
+        <button id="btn-nav-login" class="text-sm bg-soft-green text-dark-neutral hover:bg-green-400 px-4 py-2 rounded-lg font-bold transition">Login</button>
+        <button id="btn-nav-logout" class="hidden text-sm bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg font-bold transition text-white">Logout</button>
+    </header>
+
+    <!-- 1. HALAMAN PUBLIK (Laporan) -->
+    <main id="view-public" class="p-5 space-y-5">
+        
+        <!-- Card Pemasukan -->
+        <div class="border border-gray-200 rounded-xl bg-cream shadow-sm overflow-hidden">
+            <div class="p-4 flex justify-between items-center cursor-pointer select-none" onclick="toggleAccordion('acc-pemasukan', 'icon-pemasukan')">
+                <h2 class="font-bold text-[15px] text-green-700">Pemasukan Minggu Ini</h2>
+                <div class="flex items-center gap-2">
+                    <span id="total-pemasukan" class="font-bold text-sm">Rp 0</span>
+                    <svg id="icon-pemasukan" class="w-5 h-5 transform transition-transform text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+            <div id="acc-pemasukan" class="accordion-content bg-white px-4 border-t border-gray-100">
+                <ul id="list-pemasukan" class="py-3 space-y-3 text-sm"></ul>
+            </div>
+        </div>
+
+        <!-- Card Pengeluaran -->
+        <div class="border border-gray-200 rounded-xl bg-cream shadow-sm overflow-hidden">
+            <div class="p-4 flex justify-between items-center cursor-pointer select-none" onclick="toggleAccordion('acc-pengeluaran', 'icon-pengeluaran')">
+                <h2 class="font-bold text-[15px] text-red-600">Pengeluaran Minggu Ini</h2>
+                <div class="flex items-center gap-2">
+                    <span id="total-pengeluaran" class="font-bold text-sm">Rp 0</span>
+                    <svg id="icon-pengeluaran" class="w-5 h-5 transform transition-transform text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+            <div id="acc-pengeluaran" class="accordion-content bg-white px-4 border-t border-gray-100">
+                <ul id="list-pengeluaran" class="py-3 space-y-3 text-sm"></ul>
+            </div>
+        </div>
+
+        <!-- Card Sisa Saldo -->
+        <div class="rounded-xl bg-soft-green shadow-sm p-5 flex justify-between items-center mt-2 border border-green-300">
+            <h2 class="font-bold text-[15px] text-dark-neutral">Sisa Uang Kas</h2>
+            <span id="total-saldo" class="font-bold text-lg text-dark-neutral">Rp 0</span>
+        </div>
+    </main>
+
+    <!-- 2. HALAMAN LOGIN -->
+    <main id="view-login" class="hidden p-6">
+        <h2 class="text-2xl font-bold mb-6 text-center text-dark-neutral">Login Admin</h2>
+        <div class="space-y-4 max-w-sm mx-auto">
+            <div>
+                <label class="block text-sm font-medium mb-1 text-gray-600">Username</label>
+                <input type="text" id="input-user" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-soft-green focus:ring-1 focus:ring-soft-green" placeholder="Masukkan Akun">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1 text-gray-600">Password</label>
+                <input type="password" id="input-pass" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-soft-green focus:ring-1 focus:ring-soft-green" placeholder="Masukkan Password">
+            </div>
+            
+            <p id="login-error" class="text-red-500 text-sm text-center hidden">Username atau password salah!</p>
+            
+            <button onclick="handleLogin()" id="btn-login-submit" class="w-full bg-dark-neutral text-white py-3 rounded-lg hover:bg-gray-800 transition font-bold mt-2">Masuk</button>
+            <button onclick="switchView('public')" class="w-full text-gray-500 py-2 text-sm hover:text-dark-neutral transition">Batal & Kembali</button>
+        </div>
+    </main>
+
+    <!-- 3. HALAMAN DASHBOARD ADMIN (Input Transaksi) -->
+    <main id="view-admin" class="hidden p-6">
+        <h2 class="text-xl font-bold mb-5 text-dark-neutral">Input Transaksi</h2>
+        <div class="bg-cream p-5 rounded-xl space-y-4 border border-gray-200">
+            <div>
+                <label class="block text-sm font-medium mb-1 text-gray-600">Jenis Transaksi</label>
+                <select id="input-jenis" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-soft-green">
+                    <option value="masuk">Pemasukan (+)</option>
+                    <option value="keluar">Pengeluaran (-)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1 text-gray-600">Keterangan</label>
+                <input type="text" id="input-ket" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-soft-green" placeholder="Contoh: Beli shuttlecock">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1 text-gray-600">Nominal (Rp)</label>
+                <input type="number" id="input-nominal" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-soft-green" placeholder="Contoh: 50000">
+            </div>
+            
+            <p id="input-error" class="text-red-500 text-sm hidden">Mohon isi keterangan dan nominal!</p>
+
+            <button onclick="tambahTransaksi()" id="btn-tambah" class="w-full bg-soft-green text-dark-neutral font-bold py-3 rounded-lg hover:bg-green-400 transition mt-2">Simpan Transaksi</button>
+        </div>
+        <div class="mt-6 text-center">
+            <button onclick="switchView('public')" class="text-gray-500 text-sm font-medium hover:text-dark-neutral transition flex items-center justify-center gap-1 mx-auto">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Kembali Lihat Laporan
+            </button>
+        </div>
+    </main>
+
+</div>
+
+<!-- Panggil file Script terpisah -->
+<script type="module" src="script.js"></script>
+</body>
+</html>
