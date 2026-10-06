@@ -4,12 +4,12 @@ import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "ht
 
 // === 1. PASTE CONFIG FIREBASE ANTUM DI SINI ===
 const firebaseConfig = {
-    apiKey: "AIzaSyATBrs-t6abDvlNMuo4EyhacO6U8p7tuXw",
-    authDomain: "kas-pbotk.firebaseapp.com",
-    projectId: "kas-pbotk",
-    storageBucket: "kas-pbotk.firebasestorage.app",
-    messagingSenderId: "294578979327",
-    appId: "1:294578979327:web:ee1a7c2b86a484b98467ca"
+  apiKey: "AIzaSyATBrs-t6abDvlNMuo4EyhacO6U8p7tuXw",
+  authDomain: "kas-pbotk.firebaseapp.com",
+  projectId: "kas-pbotk",
+  storageBucket: "kas-pbotk.firebasestorage.app",
+  messagingSenderId: "294578979327",
+  appId: "1:294578979327:web:ee1a7c2b86a484b98467ca"
 };
 
 // Inisialisasi Firebase & Firestore
@@ -30,13 +30,14 @@ const formatRp = (angka) => {
 
 // 2. AMBIL DATA DARI FIREBASE SECARA REALTIME
 function listenData() {
-    // Kita buat listener realtime ke koleksi "transaksi"
     const q = query(collection(db, "transaksi"), orderBy("timestamp", "asc"));
     
     onSnapshot(q, (snapshot) => {
         const listPemasukan = document.getElementById('list-pemasukan');
         const listPengeluaran = document.getElementById('list-pengeluaran');
         
+        if(!listPemasukan || !listPengeluaran) return;
+
         listPemasukan.innerHTML = '';
         listPengeluaran.innerHTML = '';
         
@@ -71,7 +72,6 @@ function listenData() {
 }
 
 // 3. FUNGSI SIMPAN KE FIREBASE
-// Menggunakan window. agar bisa dipanggil dari atribut onclick di file HTML
 window.tambahTransaksi = async function() {
     const jenis = document.getElementById('input-jenis').value;
     const ket = document.getElementById('input-ket').value;
@@ -88,15 +88,13 @@ window.tambahTransaksi = async function() {
     btn.innerText = 'Menyimpan...';
 
     try {
-        // Simpan dokumen ke koleksi "transaksi" di Firestore
         await addDoc(collection(db, "transaksi"), {
             jenis: jenis,
             ket: ket,
             nominal: nominal,
-            timestamp: new Date() // Menyimpan waktu saat ini agar bisa diurutkan
+            timestamp: new Date()
         });
 
-        // Reset form
         document.getElementById('input-ket').value = '';
         document.getElementById('input-nominal').value = '';
         btn.innerText = 'Simpan Transaksi';
@@ -104,8 +102,6 @@ window.tambahTransaksi = async function() {
     } catch (e) {
         console.error("Error menambah dokumen: ", e);
         btn.innerText = 'Gagal menyimpan!';
-        
-        // Kembalikan tulisan tombol setelah 2 detik jika gagal
         setTimeout(() => { btn.innerText = 'Simpan Transaksi'; }, 2000);
     }
 }
@@ -123,23 +119,29 @@ window.toggleAccordion = function(id, iconId) {
 }
 
 window.switchView = function(view) {
-    // Sembunyikan semua terlebih dahulu
     document.getElementById('view-public').classList.add('hidden');
     document.getElementById('view-login').classList.add('hidden');
     document.getElementById('view-admin').classList.add('hidden');
-    document.getElementById('btn-nav-login').classList.add('hidden');
     document.getElementById('btn-nav-logout').classList.add('hidden');
+    
+    // Tampilkan Icon Shuttlecock
+    const secretCock = document.getElementById('secret-cock-trigger');
 
-    // Tampilkan yang diminta
     if (view === 'public') {
         document.getElementById('view-public').classList.remove('hidden');
-        if(!isAdminMode) document.getElementById('btn-nav-login').classList.remove('hidden');
-        else document.getElementById('btn-nav-logout').classList.remove('hidden');
+        if (isAdminMode) {
+            document.getElementById('btn-nav-logout').classList.remove('hidden');
+            if (secretCock) secretCock.classList.add('hidden');
+        } else {
+            if (secretCock) secretCock.classList.remove('hidden');
+        }
     } else if (view === 'login') {
         document.getElementById('view-login').classList.remove('hidden');
+        if (secretCock) secretCock.classList.add('hidden');
     } else if (view === 'admin') {
         document.getElementById('view-admin').classList.remove('hidden');
         document.getElementById('btn-nav-logout').classList.remove('hidden');
+        if (secretCock) secretCock.classList.add('hidden');
     }
 }
 
@@ -152,7 +154,6 @@ window.handleLogin = function() {
     err.classList.add('hidden');
     btn.innerText = 'Memproses...';
     
-    // Simulasi Login (sementara hardcode dulu)
     setTimeout(() => {
         if(u === 'admin' && p === 'admin123') { 
             isAdminMode = true;
@@ -166,14 +167,35 @@ window.handleLogin = function() {
     }, 500);
 }
 
-// 5. INISIALISASI SAAT HALAMAN DIMUAT
+// 5. TRIPLE CLICK RAHASIA SHUTTLECOCK
+let cockClickCount = 0;
+let cockClickTimer = null;
+
+function setupSecretCockLogin() {
+    const cockBtn = document.getElementById('secret-cock-trigger');
+    if (cockBtn) {
+        cockBtn.addEventListener('click', () => {
+            cockClickCount++;
+            if (cockClickCount === 1) {
+                cockClickTimer = setTimeout(() => {
+                    cockClickCount = 0;
+                }, 1000);
+            } else if (cockClickCount >= 3) {
+                clearTimeout(cockClickTimer);
+                cockClickCount = 0;
+                window.switchView('login');
+            }
+        });
+    }
+}
+
+// 6. INISIALISASI SAAT HALAMAN DIMUAT
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('btn-nav-login').addEventListener('click', () => { window.switchView('login'); });
     document.getElementById('btn-nav-logout').addEventListener('click', () => { 
         isAdminMode = false;
         window.switchView('public'); 
     });
     
-    // Mulai dengarkan perubahan data di database
+    setupSecretCockLogin();
     listenData();
 });

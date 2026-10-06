@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keuangan Klub Badminton - PB OTK</title>
+    <title>Keuangan Klub Badminton</title>
     
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,7 +26,7 @@
     <!-- Plus Jakarta Sans Font -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Panggil file CSS terpisah -->
+    <!-- CSS Terpisah -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="antialiased min-h-screen flex flex-col items-center sm:py-8">
@@ -35,8 +35,19 @@
     
     <!-- HEADER -->
     <header class="bg-dark-neutral text-white p-5 flex justify-between items-center">
-        <h1 class="text-lg font-bold tracking-wide">UANG KAS PB.OTK</h1>
-        <button id="btn-nav-login" class="text-sm bg-soft-green text-dark-neutral hover:bg-green-400 px-4 py-2 rounded-lg font-bold transition">Login</button>
+        <h1 class="text-lg font-bold tracking-wide">Klub Badminton</h1>
+        
+        <!-- Tombol Rahasia Icon Shuttlecock -->
+        <button id="secret-cock-trigger" aria-label="Admin Access" class="p-2 text-gray-400 hover:text-soft-green transition rounded-full focus:outline-none opacity-80 hover:opacity-100">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 18a2.5 2.5 0 0 0 2.5-2.5V15h-5v.5A2.5 2.5 0 0 0 12 18z"/>
+                <path d="M9.5 15L7 5l5 2 5-2-2.5 10"/>
+                <path d="M8 9h8"/>
+                <path d="M8.7 12h6.6"/>
+            </svg>
+        </button>
+
+        <!-- Tombol Logout (Tampil hanya saat Admin Login) -->
         <button id="btn-nav-logout" class="hidden text-sm bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg font-bold transition text-white">Logout</button>
     </header>
 
@@ -84,11 +95,11 @@
         <div class="space-y-4 max-w-sm mx-auto">
             <div>
                 <label class="block text-sm font-medium mb-1 text-gray-600">Username</label>
-                <input type="text" id="input-user" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-soft-green focus:ring-1 focus:ring-soft-green" placeholder="Masukkan Akun">
+                <input type="text" id="input-user" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-soft-green focus:ring-1 focus:ring-soft-green" placeholder="Masukkan admin">
             </div>
             <div>
                 <label class="block text-sm font-medium mb-1 text-gray-600">Password</label>
-                <input type="password" id="input-pass" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-soft-green focus:ring-1 focus:ring-soft-green" placeholder="Masukkan Password">
+                <input type="password" id="input-pass" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-soft-green focus:ring-1 focus:ring-soft-green" placeholder="Masukkan admin123">
             </div>
             
             <p id="login-error" class="text-red-500 text-sm text-center hidden">Username atau password salah!</p>
@@ -132,7 +143,7 @@
 
 </div>
 
-<!-- Panggil file Script terpisah -->
+<!-- Script ES Module -->
 <script type="module" src="script.js"></script>
 </body>
 </html>
