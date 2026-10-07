@@ -1,7 +1,8 @@
 body { 
     font-family: 'Plus Jakarta Sans', sans-serif; 
-    background-color: #f3f4f6; /* Abu-abu terang untuk luar layar di desktop */
+    background-color: #f3f4f6;
     color: #1f2937; 
+    padding-bottom: 1.5rem; /* Memberi ruang di bagian paling bawah */
 }
 
 /* Animasi Dropdown / Accordion */
